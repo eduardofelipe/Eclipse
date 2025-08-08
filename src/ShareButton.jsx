@@ -1,24 +1,21 @@
-import React from 'react';
 
-function formatResultText(result) {
-  let text = 'Resultado do Sorteio:\n';
-  result.forEach((item, idx) => {
-    text += `${item.name}: ${item.race.name} [${item.race.expansion === 'base' ? 'Base' : item.race.expansion.charAt(0).toUpperCase() + item.race.expansion.slice(1)}]`;
-    text += '\n';
-  });
-  return text;
+function encodeResult(result) {
+  // Codifica o resultado em base64 para compartilhar via URL
+  const data = result.map(r => ({ n: r.name, r: r.race.name, c: r.race.color, e: r.race.expansion }));
+  return btoa(encodeURIComponent(JSON.stringify(data)));
 }
 
 export default function ShareButton({ result }) {
   const handleShare = () => {
-    const text = formatResultText(result);
-    navigator.clipboard.writeText(text);
-    alert('Resultado copiado para a área de transferência!');
+    const encoded = encodeResult(result);
+    const url = `${window.location.origin}${window.location.pathname}?sorteio=${encoded}`;
+    navigator.clipboard.writeText(url);
+    alert('Link do resultado copiado para a área de transferência!');
   };
 
   return (
     <button className="draw-btn" style={{ marginTop: 16 }} onClick={handleShare}>
-      Compartilhar Resultado (Texto)
+      Compartilhar Resultado (Link)
     </button>
   );
 }
