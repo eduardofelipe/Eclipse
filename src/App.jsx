@@ -33,6 +33,10 @@ function App() {
     return null;
   });
 
+  // Se veio de um link de sorteio, mostrar só o resultado
+  const params = new URLSearchParams(window.location.search);
+  const onlyResult = params.has('sorteio');
+
   // Limites de jogadores
   const minPlayers = 2;
   const maxPlayers = RACES.filter(r => selectedExpansions.includes(r.expansion)).length;
@@ -71,6 +75,28 @@ function App() {
     }));
     setResult(draw);
   };
+
+  if (onlyResult && result) {
+    return (
+      <div className="sorteador-container">
+        <div className="result">
+          <h2>Resultado do Sorteio</h2>
+          {result.map((item, idx) => (
+            <div className="race-row" key={idx}>
+              <span
+                className="race-color"
+                style={{ background: item.race.color, border: '3px solid #fff' }}
+                title={item.race.name}
+              />
+              <span className="player-name">{item.name}:</span>
+              <span className="race-name">{item.race.name}</span>
+              <span style={{ color: '#aaa', fontSize: 12 }}>({item.race.expansion === 'base' ? 'Base' : item.race.expansion.charAt(0).toUpperCase() + item.race.expansion.slice(1)})</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sorteador-container">
